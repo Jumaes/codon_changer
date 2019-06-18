@@ -106,7 +106,7 @@ class Triplet:
 class Sequence:
     def __init__(self,inseq, verbose=False):
         self.inseq = inseq
-        self.tripletlist = split_seq_to_Triplets(self.inseq)
+        self.tripletlist = self.split_seq_to_Triplets()
         self.AAseq = ''
         for item in self.tripletlist:
             self.AAseq = self.AAseq + item.AA
@@ -116,41 +116,38 @@ class Sequence:
             print ('Amino acid sequence would be:')
             print (self.AAseq)
 
-    def split_seq_to_Triplets(self,sequence, verbose=False):
-        assert(len(sequence)%3 ==0), 'Sequence length not divisible by 3. Not gonna work with codon triplets.'
+    def split_seq_to_Triplets(self, verbose=False):
+        assert(len(self.inseq)%3 ==0), 'Sequence length not divisible by 3. Not gonna work with codon triplets.'
         list_of_triplet_objects = []
-        for i in range(0,len(sequence),3):
-            list_of_triplet_objects.append(Triplet(sequence[i:i+3],verbose))
+        for i in range(0,len(self.inseq),3):
+            list_of_triplet_objects.append(Triplet(self.inseq[i:i+3],verbose))
         return list_of_triplet_objects
 
     def new_random_sequence(self, verbose = False):
-        triplets = split_seq_to_Triplets(self.inseq, verbose)
         newseq = ''
-        for i in range(0, len(triplets)):
-            newseq = newseq + triplets[i].random_alt()
-        if verbose: print ('Writing old sequence %s to new sequence %s' %(sequence,newseq))
+        for i in range(0, len(self.tripletlist)):
+            newseq = newseq + self.tripletlist[i].random_alt()
+        if verbose: print ('Writing old sequence %s to new sequence %s' %(self.inseq,newseq))
         return newseq
 
     def new_random_exp_sequence(self, verbose = False):
-        triplets = split_seq_to_Triplets(self.inseq, verbose)
         newseq = ''
-        for i in range(0, len(triplets)):
+        for i in range(0, len(self.tripletlist)):
             if i+2 in surface:
-                newseq = newseq + triplets[i].random_expalt()
+                newseq = newseq + self.tripletlist[i].random_expalt()
             else:
-                newseq = newseq + triplets[i].random_alt()
-        if verbose: print ('Writing old sequence %s to new sequence %s' %(sequence,newseq))
+                newseq = newseq + self.tripletlist[i].random_alt()
+        if verbose: print ('Writing old sequence %s to new sequence %s' %(self.inseq,newseq))
         return newseq
 
     def new_random_ortho_exp_sequence(self, verbose = False):
-        triplets = split_seq_to_Triplets(self.inseq, verbose)
         newseq = ''
-        for i in range(0, len(triplets)):
+        for i in range(0, len(self.tripletlist)):
             if i+2 in surface:
-                newseq = newseq + triplets[i].random_orthoexpalt()
+                newseq = newseq + self.tripletlist[i].random_orthoexpalt()
             else:
-                newseq = newseq + triplets[i].random_orthoalt()
-        if verbose: print ('Writing old sequence %s to new sequence %s' %(sequence,newseq))
+                newseq = newseq + self.tripletlist[i].random_orthoalt()
+        if verbose: print ('Writing old sequence %s to new sequence %s' %(self.inseq,newseq))
         return newseq
 
 def simple_compare(seq1,seq2):
@@ -186,8 +183,14 @@ def graphical_compare(seq1,seq2):
 
 seqo = Sequence(inputsequence, True)
 
+for i in range(0,10):
+    with open(inputfile.split('.')[-2]+'_new_'+str(i)+'.fasta','w') as fout:
+        fout.write(seqo.new_random_ortho_exp_sequence())
+
 '''Examples:
 newsequence = seqo.new_random_ortho_exp_sequence()
 graphical_compare(seqo.inseq,newsequence)
+
+
 
 '''
