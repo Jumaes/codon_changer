@@ -185,11 +185,16 @@ def graphical_compare(seq1,seq2):
 seqo = Sequence(inputsequence, True)
 
 for i in range(0,10):
+    newsequence = seqo.new_random_ortho_exp_sequence()
+    newseqobj = Sequence(newsequence)
+    newAA = newseqobj.AAseq
+    Hits,Percent = simple_compare(seqo.inseq,newsequence)
+    print ('New sequence with identical positions: %s. Percent identical: %s.' %(Hits, Percent))
     with open(inputfile.split('.')[-2]+'_new_'+str(i)+'.fasta','w') as fout:
-        newsequence = seqo.new_random_ortho_exp_sequence()
-        Hits,Percent = simple_compare(seqo.inseq,newsequence)
-        print ('New sequence with identical positions: %s. Percent identical: %s.' %(Hits, Percent))
         fout.write(seqo.new_random_ortho_exp_sequence())
+    with open('new_AAsequence'+str(i)+'.fasta','w') as fout:
+        fout.write('>new_AAsequence'+str(i)+'\n')
+        fout.write(newAA)
 
 '''Examples:
 newsequence = seqo.new_random_ortho_exp_sequence()
